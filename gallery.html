@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Gallery | AR Production</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        .gallery-header {
+            padding-top: 150px;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .video-card {
+            display: block;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+            text-decoration: none;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+        }
+
+        .video-thumb {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .play-overlay i {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .video-card:hover .play-overlay {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .video-card:hover .play-overlay i {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .video-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .video-info h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .video-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar" style="background: rgba(10, 10, 13, 0.98);">
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="AR Logo" class="nav-logo-img" onerror="this.style.display='none'">
+            <div class="logo"><span>AR</span>Production</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="index.html#portfolio">Portfolio</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="gallery-header reveal">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 5%;">
+            <a href="index.html#portfolio" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+            <h1 class="section-title" id="gallery-title">Gallery</h1>
+            <p id="gallery-desc" style="margin-top: 1rem;">Click on a video to watch it directly on Facebook.</p>
+        </div>
+    </div>
+
+    <section class="section" style="padding-top: 0;">
+        <div id="video-container" class="portfolio-grid" style="max-width: 1200px; margin: 0 auto;">
+            <!-- Videos will be populated here -->
+        </div>
+        <div id="no-videos" style="text-align: center; display: none; margin-top: 3rem;">
+            <p>No videos uploaded for this category yet.</p>
+        </div>
+    </section>
+
+    <script src="./js/data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            
+            const titles = {
+                'wedding': 'Wedding Videography & Photography',
+                'event': 'Event Photography & Videography',
+                'multicam': 'Multi-Camera Production',
+                'drone': 'Drone Videography',
+                'shortfilm': 'Short Films & Documentaries',
+                'commercial': 'Advertisements',
+                'livestream': 'Live Streaming'
+            };
+
+            if(category && titles[category]) {
+                document.getElementById('gallery-title').innerText = titles[category];
+            } else {
+                document.getElementById('gallery-title').innerText = 'All Videos';
+            }
+
+            const container = document.getElementById('video-container');
+            const noVideos = document.getElementById('no-videos');
+            
+            // Get videos correctly from data.js
+            let videos = window.PORTFOLIO_VIDEOS || [];
+            
+            // Filter by category if specified
+            if (category) {
+                videos = videos.filter(v => v.category === category);
+            }
+
+            if (videos.length === 0) {
+                noVideos.style.display = 'block';
+            } else {
+                videos.forEach((video, index) => {
+                    const card = document.createElement('a');
+                    card.href = video.link;
+                    card.target = "_blank";
+                    card.className = "video-card reveal";
+                    card.style.animationDelay = `${index * 0.1}s`;
+
+                    card.innerHTML = `
+                        <div style="position: relative;">
+                            <img src="${video.thumbnail}" alt="${video.title}" class="video-thumb" onerror="this.src='assets/images/logo.png'">
+                            <div class="play-overlay">
+                                <i class="fab fa-facebook"></i>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <h3>${video.title}</h3>
+                            <p>Watch on Facebook <i class="fas fa-external-link-alt" style="font-size: 0.8rem; margin-left: 5px;"></i></p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // Simple reveal animation
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }, 100);
+        });
+    </script>
+</body>
+</html>

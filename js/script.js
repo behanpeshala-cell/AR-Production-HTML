@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Preloader
+    window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 800);
+            }, 1000);
+        }
+    });
     // Mobile Menu
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
@@ -41,49 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Trigger once on load
     revealOnScroll();
 
-    // Active link highlighting based on current page
-    const currentLocation = location.href;
-    const menuItem = document.querySelectorAll('.nav-links a');
-    const menuLength = menuItem.length;
-    for (let i = 0; i < menuLength; i++) {
-        const itemHref = menuItem[i].href;
-        // Check if the current location includes the href of the link, or if it's the home page
-        if (currentLocation.includes(itemHref) || (currentLocation.endsWith('/') && itemHref.includes('index.html'))) {
-            menuItem.forEach(item => item.classList.remove('active')); // remove from all
-            menuItem[i].className += " active";
-        }
-    }
+    // Active link highlighting based on current section visibility
+    const sections = document.querySelectorAll('section, header');
+    const navItems = document.querySelectorAll('.nav-links a');
 
-    // Lightbox for Portfolio
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    if (portfolioItems.length > 0) {
-        // Create lightbox elements
-        const lightbox = document.createElement('div');
-        lightbox.id = 'lightbox';
-        document.body.appendChild(lightbox);
-
-        portfolioItems.forEach(item => {
-            item.style.cursor = 'pointer'; // Make sure cursor indicates it's clickable
-            item.addEventListener('click', e => {
-                lightbox.classList.add('active');
-                const img = document.createElement('img');
-                img.src = item.querySelector('img').src;
-                while (lightbox.firstChild) {
-                    lightbox.removeChild(lightbox.firstChild);
-                }
-                lightbox.appendChild(img);
-
-                // Add close button
-                const closeBtn = document.createElement('div');
-                closeBtn.classList.add('lightbox-close');
-                closeBtn.innerHTML = '<i class="fas fa-times"></i>';
-                lightbox.appendChild(closeBtn);
-            });
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                current = section.getAttribute('id');
+            }
         });
 
-        lightbox.addEventListener('click', e => {
-            if (e.target !== e.currentTarget && !e.target.classList.contains('lightbox-close') && !e.target.closest('.lightbox-close')) return;
-            lightbox.classList.remove('active');
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === `#${current}`) {
+                item.classList.add('active');
+            }
         });
-    }
+    });
+
+    // Lightbox removed
 });

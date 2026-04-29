@@ -1,11 +1,11 @@
 :root {
-    --primary-color: #ffb703;
-    --secondary-color: #fb8500;
-    --dark-bg: #0a0a0d;
-    --card-bg: rgba(25, 25, 30, 0.6);
+    --primary-color: #ffffff;
+    --secondary-color: #f2f2f2;
+    --dark-bg: #000000;
+    --card-bg: rgba(20, 20, 20, 0.8);
     --text-main: #ffffff;
-    --text-muted: #a0a0a0;
-    --glass-border: rgba(255, 255, 255, 0.05);
+    --text-muted: #b3b3b3;
+    --glass-border: rgba(255, 255, 255, 0.15);
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -63,6 +63,7 @@ a {
 
 .highlight {
     color: var(--primary-color);
+    font-weight: 800;
 }
 
 /* Navbar */
@@ -163,7 +164,7 @@ a {
     background: var(--primary-color);
     color: var(--dark-bg);
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(255, 183, 3, 0.2);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary {
@@ -181,11 +182,10 @@ a {
     height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    /* Changed to move words to the left */
+    justify-content: center;
     position: relative;
     padding: 0 8%;
-    /* Increased side padding for better left margin */
+    text-align: center;
 }
 
 .hero-img {
@@ -210,11 +210,13 @@ a {
 }
 
 .hero-content {
-    max-width: 700px;
-    /* Reduced max width to not overlap with logo */
-    text-align: left;
+    max-width: 800px;
+    text-align: center;
     width: 100%;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .hero-subtitle {
@@ -252,7 +254,7 @@ a {
     max-height: 100%;
     object-fit: contain;
     animation: floatLogo 6s ease-in-out infinite, glowLogo 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(255, 183, 3, 0.3));
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
 }
 
 @keyframes floatLogo {
@@ -271,15 +273,15 @@ a {
 
 @keyframes glowLogo {
     0% {
-        filter: drop-shadow(0 0 15px rgba(255, 183, 3, 0.2));
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
     }
 
     50% {
-        filter: drop-shadow(0 0 40px rgba(255, 183, 3, 0.6));
+        filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.6));
     }
 
     100% {
-        filter: drop-shadow(0 0 15px rgba(255, 183, 3, 0.2));
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
     }
 }
 
@@ -337,14 +339,14 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, transparent, rgba(255, 183, 3, 0.05), transparent);
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
     transform: translateX(-100%);
     transition: transform 0.6s ease;
 }
 
 .service-card:hover {
     transform: translateY(-10px);
-    border-color: rgba(255, 183, 3, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
@@ -424,7 +426,7 @@ a {
 .info-icon {
     width: 50px;
     height: 50px;
-    background: rgba(255, 183, 3, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--primary-color);
     border-radius: 50%;
     display: flex;
@@ -626,6 +628,83 @@ textarea.form-control {
 .reveal.active {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--dark-bg);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease;
+}
+
+#preloader.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.preloader-content {
+    text-align: center;
+    animation: pulsePreloader 1.5s infinite;
+}
+
+.preloader-text {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--text-main);
+    text-transform: uppercase;
+}
+
+.preloader-text span {
+    color: var(--primary-color);
+    border-right: 2px solid var(--primary-color);
+    padding-right: 15px;
+    margin-right: 15px;
+}
+
+@keyframes pulsePreloader {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+/* Floating WhatsApp */
+.floating-whatsapp {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #25d366;
+    color: white;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 35px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.1) rotate(10deg);
+    background-color: #128c7e;
+    color: white;
 }
 
 /* Lightbox */

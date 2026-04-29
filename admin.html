@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | AR Production</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        body { padding: 2rem; background: #000; color: #fff; }
+        .dashboard-container { max-width: 800px; margin: 0 auto; background: #111; padding: 2rem; border-radius: 12px; border: 1px solid #333; }
+        h1 { font-size: 2rem; text-align: center; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; color: #ccc; }
+        input, select { width: 100%; padding: 0.8rem; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px; }
+        .btn-add { background: var(--primary-color); color: #000; padding: 0.8rem 1.5rem; border: none; font-weight: 600; cursor: pointer; border-radius: 6px; width: 100%; margin-top: 1rem; }
+        .preview-pane { margin-top: 2rem; border-top: 1px solid #333; padding-top: 2rem; }
+        .video-item { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 1rem; margin-bottom: 1rem; border-radius: 6px; }
+        .code-box { width: 100%; height: 200px; background: #0a0a0a; color: #0f0; padding: 1rem; border: 1px solid #333; font-family: monospace; border-radius: 6px; margin-top: 1rem; }
+        .btn-delete { background: #ff4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container" id="auth-panel" style="display: none;">
+        <h1 style="text-transform: none;">Admin Access Required</h1>
+        <input type="password" id="admin-pass" placeholder="Enter Password" style="margin-bottom: 1rem;">
+        <button class="btn-add" onclick="login()">Enter</button>
+    </div>
+
+    <div class="dashboard-container" id="dashboard-panel" style="display: none;">
+        <h1 style="text-transform: none;">Video Gallery Dashboard</h1>
+        
+        <div style="margin-bottom: 2rem; background: #1a1712; border: 1px solid #dda024; padding: 1rem; border-radius: 6px; color: #dda024;">
+            <i class="fas fa-info-circle"></i> Instructions: Add your videos below. Once you are done, copy the generated code at the bottom and paste it into <strong>js/data.js</strong> to save changes to the website permanently.
+        </div>
+
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Add New Facebook Video</h3>
+        <div class="form-group">
+            <label>Video Title</label>
+            <input type="text" id="v-title" placeholder="e.g. Roy & Emma Wedding">
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="v-category">
+                <option value="wedding">Wedding Videography & Photography</option>
+                <option value="event">Event Photography & Videography</option>
+                <option value="multicam">Multi-Camera Production</option>
+                <option value="drone">Drone Videography</option>
+                <option value="shortfilm">Short Films & Documentaries</option>
+                <option value="commercial">Advertisements</option>
+                <option value="livestream">Live Streaming</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Facebook Video URL</label>
+            <input type="text" id="v-url" placeholder="https://www.facebook.com/watch/?v=123...">
+        </div>
+        <div class="form-group">
+            <label>Thumbnail Image File Name / URL</label>
+            <input type="text" id="v-thumb" placeholder="assets/images/photo.png OR HTTP link">
+        </div>
+        <button class="btn-add" onclick="addVideo()">+ Add Video to List</button>
+
+        <div class="preview-pane">
+            <h3 style="margin-bottom: 1rem;">Current Videos List</h3>
+            <div id="video-list"></div>
+        </div>
+
+        <div class="preview-pane">
+            <h3 style="margin-bottom: 1rem; color: #0f0;">Step 2: Generate Code for data.js</h3>
+            <p style="color: #aaa; margin-bottom: 1rem;">Copy everything below and completely replace the contents of <strong>js/data.js</strong> to apply your updates.</p>
+            <textarea class="code-box" id="code-output" readonly></textarea>
+        </div>
+    </div>
+
+    <script src="./js/data.js"></script>
+    <script>
+        // Very basic simple JS auth since it's local
+        document.getElementById('auth-panel').style.display = 'block';
+
+        function login() {
+            if(document.getElementById('admin-pass').value === 'AR2026') {
+                document.getElementById('auth-panel').style.display = 'none';
+                document.getElementById('dashboard-panel').style.display = 'block';
+                renderList();
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        let currentData = window.PORTFOLIO_VIDEOS || [];
+
+        function renderList() {
+            const list = document.getElementById('video-list');
+            list.innerHTML = '';
+            currentData.forEach((v, index) => {
+                list.innerHTML += `
+                    <div class="video-item">
+                        <div>
+                            <strong>${v.title}</strong> <span style="color:#aaa; font-size:0.8rem">(${v.category})</span><br>
+                            <a href="${v.link}" target="_blank" style="color:var(--primary-color); font-size:0.9rem">${v.link.substring(0,30)}...</a>
+                        </div>
+                        <button class="btn-delete" onclick="removeVideo(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            updateCodeBox();
+        }
+
+        function addVideo() {
+            const title = document.getElementById('v-title').value;
+            const link = document.getElementById('v-url').value;
+            const thumb = document.getElementById('v-thumb').value;
+            const category = document.getElementById('v-category').value;
+
+            if(!title || !link || !thumb) return alert('Please fill all fields');
+
+            currentData.unshift({
+                id: Date.now().toString(),
+                title,
+                category,
+                thumbnail: thumb,
+                link
+            });
+
+            document.getElementById('v-title').value = '';
+            document.getElementById('v-url').value = '';
+            document.getElementById('v-thumb').value = '';
+            renderList();
+        }
+
+        function removeVideo(index) {
+            currentData.splice(index, 1);
+            renderList();
+        }
+
+        function updateCodeBox() {
+            const dataStr = JSON.stringify(currentData, null, 4);
+            const code = `// This file acts as the database for the static website.\n// To use changes from the Admin Dashboard, copy the generated code from the dashboard and paste it to overwrite this file.\n\nwindow.PORTFOLIO_VIDEOS = ${dataStr};`;
+            document.getElementById('code-output').value = code;
+        }
+    </script>
+</body>
+</html>
